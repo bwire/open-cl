@@ -1,3 +1,5 @@
+#define PROGRAM_FILE "blank.cl"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <OpenCL/cl.h>
@@ -32,7 +34,7 @@ void test_buffer(cl_device_id device,  cl_context context) {
     exit(1);
   }
 
-  err = clSetKernelArg(kernel, 0, sizeof(matrix_buffer), &matrix_buffer);
+  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &matrix_buffer);
   if (err < 0) {
     perror("Couldn't set the buffer as the kernel argument");
     exit(1);  
