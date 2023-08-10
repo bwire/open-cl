@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <OpenCL/cl.h>
 
-void test_buffer(cl_context ctx, cl_command_queue queue,  cl_kernel kernel) {
+#include "build_program.c"
+
+void test_buffer(cl_device_id device,  cl_context context) {
   cl_int i, err;
   float full_matrix[80], zero_matrix[80];
   cl_mem matrix_buffer;
@@ -11,12 +13,20 @@ void test_buffer(cl_context ctx, cl_command_queue queue,  cl_kernel kernel) {
   const size_t region[3] = {4 * sizeof(float), 4, 1};
   const size_t row_pitch = 10;
 
+  cl_program program = build_program(context, device, PROGRAM_FILE);
+  cl_kernel kernel = clCreateKernel(program, "blank", &err);
+  cl_command_queue queue = clCreateCommandQueue(context, device, 0, &err);
+  if (err < 0) {
+    perror("Could not create a command queue");
+    exit(1);
+  }
+
   for(i = 0; i < 80; i++) {
     full_matrix[i] = i * 2.0f;
     zero_matrix[i] = 0.0f;
    } 
 
-  matrix_buffer = clCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(full_matrix), full_matrix, &err);
+  matrix_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(full_matrix), full_matrix, &err);
   if (err < 0) {
     perror("Couldn't create a buffer");
     exit(1);
@@ -57,5 +67,8 @@ void test_buffer(cl_context ctx, cl_command_queue queue,  cl_kernel kernel) {
     NULL
   );
 
+  clReleaseProgram(program);
   clReleaseMemObject(matrix_buffer);
+  clReleaseCommandQueue(queue);
+  clReleaseKernel(kernel);
 }
