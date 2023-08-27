@@ -25,14 +25,14 @@ int main() {
   for (cl_int i = 0; i < num_platforms; i++) {
     size_t extension_size;
     
-    cl_int result = clGetPlatformInfo(platforms[i], CL_PLATFORM_EXTENSIONS, 0, NULL, &extension_size);
+    cl_int result = clGetPlatformInfo(platforms[i], CL_PLATFORM_VERSION, 0, NULL, &extension_size);
     if (result < 0) {
       perror("Couldn't read extension data");
       exit(1);
     }
 
     char* extension_data = (char*) malloc(extension_size);
-    clGetPlatformInfo(platforms[i], CL_PLATFORM_EXTENSIONS, extension_size, extension_data, NULL);
+    clGetPlatformInfo(platforms[i], CL_PLATFORM_VERSION, extension_size, extension_data, NULL);
     printf("Platform %d supports extensions: %s\n", i, extension_data);
 
     if (strstr(extension_data, icd_ext) != NULL) {
