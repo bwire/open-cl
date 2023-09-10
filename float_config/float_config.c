@@ -10,8 +10,8 @@ int main() {
 
   err = clGetPlatformIDs(1, &platform, NULL);
   if (err < 0) {
-  perror("Couldn't identify a platform");
-  exit(1);
+   perror("Couldn't identify a platform");
+   exit(1);
   }
 
   err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
